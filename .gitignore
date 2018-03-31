@@ -1,2 +1,4 @@
 config.json
 dist/index.html
+
+node_modules
