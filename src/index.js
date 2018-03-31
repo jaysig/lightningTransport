@@ -14,14 +14,16 @@ import MapContainer from './components/MapContainer';
 const createStoreWithMiddleware = applyMiddleware(promise)(createStore)
 
 const Root = () => {
-  <Provider store={ createStoreWithMiddleware(reducers) }>
-    <Router history={hashHistory}>
+  return (
+    <Provider store={ createStoreWithMiddleware(reducers) }>
+      <Router history={hashHistory}>
         <Route path="/" component={ Landing } >
           <IndexRedirect to="/map" />
           <Route path="map" component={ MapContainer} />
         </Route>
       </Router>
-  </Provider>
+    </Provider>
+  )
 }
 
 
