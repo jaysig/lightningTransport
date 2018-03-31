@@ -72,6 +72,11 @@ div {
   color: black
 }
 
+.maxW {
+  padding-left: 20%;
+  padding-right: 20%;
+}
+
 #lighting {
   color: yellow;
   text-align: center;

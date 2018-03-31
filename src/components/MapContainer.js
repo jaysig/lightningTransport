@@ -1,4 +1,6 @@
 import React, { Component} from 'react';
+import axios from 'axios';
+import MapArea from './Map'
 import MapForm from './MapForm'
 import { connect } from 'react-redux';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
@@ -51,8 +53,24 @@ class MapContainer extends Component {
           startCords,
           endCords
         }
-        this.props.dispatch(newRoute(cords))
-        console.log('End', startCords, endCords);
+        // this.props.dispatch(newRoute(cords))
+        let directionRequest = {
+          origin: cords.startCords,
+          destination: cords.endCords,
+          travelMode: "DRIVING"
+        }
+        // axios.post('http://localhost:8081/route', { directionRequest })
+        // .then(function(result){
+        //   console.log(result);
+        //   dispatch(routeToken(result));
+        // });
+        axios.post('http://localhost:8081/route', { directionRequest })
+          .then(res => {
+            console.log(res,'resly');
+            console.log(res.data);
+            console.log('End', startCords, endCords);
+          })
+
       })
       .catch(error => console.error('Error in the End', error))
   }
@@ -75,7 +93,7 @@ class MapContainer extends Component {
     return(
       <div>
         <h3>Hello</h3>
-        {/* <Map /> */}
+        <MapArea />
         <MapForm
           formSubmit={this.handleFormSubmit}
           start={start}
