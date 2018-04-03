@@ -2,16 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import './index.css';
 
 import { Router, Route, hashHistory, IndexRedirect } from 'react-router';
-import promise from 'redux-promise';
+// import promise from 'redux-promise';
 import reducers from './reducers';
 
 import Landing from './components/Landing';
 import MapContainer from './components/MapContainer';
 
-const createStoreWithMiddleware = applyMiddleware(promise)(createStore)
+const createStoreWithMiddleware = applyMiddleware(thunk)(createStore)
 
 const Root = () => {
   return (

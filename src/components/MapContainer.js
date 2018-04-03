@@ -5,14 +5,17 @@ import MapForm from './MapForm'
 import { connect } from 'react-redux';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
 import { newRoute } from '../actions';
+import config from '../../config.json'
 
 
 class MapContainer extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      start: 'San Francisco, CA',
-      end: ''
+      start: 'Dallas, TX',
+      end: '',
+      mapCenter: {lat:32.7844217, lng:-96.8069456},
+      directions: {routes: []}
     }
     this.changeStart = (start) => this.setState({ start })
     this.changeEnd = (end) => this.setState({ end })
@@ -49,11 +52,15 @@ class MapContainer extends Component {
           lat,
           lng
         }
+        this.setState({mapCenter: startCords})
+
         let cords = {
           startCords,
           endCords
         }
         // this.props.dispatch(newRoute(cords))
+        // origin: cords.startCords,
+        // destination: cords.endCords,
         let directionRequest = {
           origin: cords.startCords,
           destination: cords.endCords,
@@ -66,8 +73,16 @@ class MapContainer extends Component {
         // });
         axios.post('http://localhost:8081/route', { directionRequest })
           .then(res => {
-            console.log(res,'resly');
-            console.log(res.data);
+            // console.log(res,'resly');
+            // console.log(res.data);
+            // let bounds = res.data.routes[0].bounds
+            // let newBound = {
+            //   b: {b: bounds.northeast.lat, f: bounds.northeast.lng},
+            //   f: {b: bounds.southwest.lat, f: bounds.southwest.lng}
+            // }
+            // res.data.routes[0].bounds = newBound
+            this.setState({ directions: res.data})
+            console.log(this.state,'directing');
             console.log('End', startCords, endCords);
           })
 
@@ -92,8 +107,14 @@ class MapContainer extends Component {
     }
     return(
       <div>
-        <h3>Hello</h3>
-        <MapArea />
+        <MapArea
+          googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${config.google.maps}&v=3.exp&libraries=geometry,drawing,places`}
+          loadingElement={<div style={{ height: '50vh', width: '50%' }} />}
+          containerElement={<div style={{ height: '60vh', width: '50%' }} className="maxW"/>}
+          mapElement={<div style={{ height: `100%` }} />}
+          directions={this.state.directions}
+          center={this.state.mapCenter}
+        />
         <MapForm
           formSubmit={this.handleFormSubmit}
           start={start}
