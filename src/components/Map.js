@@ -32,7 +32,7 @@ let MapArea = compose(
   withGoogleMap,
   lifecycle({
     componentDidMount() {
-      const DirectionsService = new google.maps.DirectionsService();
+      // const DirectionsService = new google.maps.DirectionsService();
       // new google.maps.Map(document.getElementById('map'), {
       //     center: {lat: -34.397, lng: 150.644},
       //     zoom: 8
@@ -58,21 +58,22 @@ let MapArea = compose(
     componentWillUpdate(props) {
       const DirectionsService = new google.maps.DirectionsService();
       console.log(props.directions, 'props here');
-      if(props.directions.status === "OK") {
+      if(props.directions.status === "OK" && props.directions.routes[0].bounds.northeast) {
         const bounds = props.directions.routes[0].bounds
+        console.log(bounds,'stately');
+        console.log(props,'PROPERTIES');
         DirectionsService.route({
-          origin: new google.maps.LatLng(bounds.northeast.lat, bounds.northeast.lng),
-          destination: new google.maps.LatLng(bounds.southwest.lat, bounds.southwest.lng),
+          // origin: new google.maps.LatLng(bounds.northeast.lat, bounds.northeast.lng),
+          // destination: new google.maps.LatLng(bounds.southwest.lat, bounds.southwest.lng),
+          origin: props.start,
+          destination: props.end,
           travelMode: google.maps.TravelMode.DRIVING,
         }, (result, status) => {
           if (status === google.maps.DirectionsStatus.OK) {
-            this.setState({
-              directions: result,
-            });
-            // console.log(this.state);
-            console.log('UPDATING');
-            console.log(this.state.directions.routes[0].bounds);
+            props.updateDirections(result)
           } else {
+            console.log(result);
+            console.log(status);
             console.error(`error fetching directions ${result}`);
             // this.setState({error: 1})
           }

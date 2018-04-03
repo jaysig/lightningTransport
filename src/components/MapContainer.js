@@ -6,6 +6,12 @@ import { connect } from 'react-redux';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
 import { newRoute } from '../actions';
 import config from '../../config.json'
+const {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  DirectionsRenderer,
+} = require("react-google-maps");
 
 
 class MapContainer extends Component {
@@ -20,6 +26,11 @@ class MapContainer extends Component {
     this.changeStart = (start) => this.setState({ start })
     this.changeEnd = (end) => this.setState({ end })
     this.handleFormSubmit = this.handleFormSubmit.bind(this)
+    this.updateDirections = this.updateDirections.bind(this)
+  }
+
+  updateDirections(directions) {
+    this.setState({directions})
   }
 
   handleFormSubmit = (event) => {
@@ -62,8 +73,8 @@ class MapContainer extends Component {
         // origin: cords.startCords,
         // destination: cords.endCords,
         let directionRequest = {
-          origin: cords.startCords,
-          destination: cords.endCords,
+          origin: this.state.start,
+          destination: this.state.end,
           travelMode: "DRIVING"
         }
         // axios.post('http://localhost:8081/route', { directionRequest })
@@ -113,7 +124,10 @@ class MapContainer extends Component {
           containerElement={<div style={{ height: '60vh', width: '50%' }} className="maxW"/>}
           mapElement={<div style={{ height: `100%` }} />}
           directions={this.state.directions}
+          start={this.state.start}
+          end={this.state.end}
           center={this.state.mapCenter}
+          updateDirections={this.updateDirections}
         />
         <MapForm
           formSubmit={this.handleFormSubmit}
