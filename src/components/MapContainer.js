@@ -184,7 +184,7 @@ class MapContainer extends Component {
           end={end}
           cssClasses={cssClasses}
         />
-        <button onClick={this.directionButton}> Render Directions </button>
+        <button onClick={this.directionButton}> Render Directions On Map</button>
       </div>
     )
   }
