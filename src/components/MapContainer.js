@@ -14,6 +14,7 @@ const {
 } = require("react-google-maps");
 
 
+
 class MapContainer extends Component {
   constructor(props) {
     super(props)
@@ -27,6 +28,7 @@ class MapContainer extends Component {
     this.changeEnd = (end) => this.setState({ end })
     this.handleFormSubmit = this.handleFormSubmit.bind(this)
     this.updateDirections = this.updateDirections.bind(this)
+    this.directionButton = this.directionButton.bind(this)
   }
 
   updateDirections(directions) {
@@ -35,9 +37,10 @@ class MapContainer extends Component {
 
   handleFormSubmit = (event) => {
     event.preventDefault()
-    console.log(this.state)
     let startCords = {}
     let endCords = {}
+    let cordArray = [];
+    let cordTest;
 
     geocodeByAddress(this.state.start)
       .then((results) => {
@@ -45,11 +48,11 @@ class MapContainer extends Component {
         return getLatLng(results[0])
       })
       .then(({lat, lng}) => {
-        console.log('Success', lat, lng)
         startCords = {
           lat,
           lng
         }
+        cordArray[0] = [lat, lng]
       })
       .catch(error => console.error('Error at the Start', error))
 
@@ -63,6 +66,7 @@ class MapContainer extends Component {
           lat,
           lng
         }
+        cordArray[1] = [lat, lng]
         this.setState({mapCenter: startCords})
 
         let cords = {
@@ -82,24 +86,69 @@ class MapContainer extends Component {
         //   console.log(result);
         //   dispatch(routeToken(result));
         // });
-        axios.post('http://localhost:8081/route', { directionRequest })
+        // console.log(cordArray, 'cord Check');
+        axios.post('http://localhost:8081/route', cordArray)
           .then(res => {
             // console.log(res,'resly');
             // console.log(res.data);
-            // let bounds = res.data.routes[0].bounds
-            // let newBound = {
-            //   b: {b: bounds.northeast.lat, f: bounds.northeast.lng},
-            //   f: {b: bounds.southwest.lat, f: bounds.southwest.lng}
+            // if(res.data.routes) {
+            //   let bounds = res.data.routes[0].bounds
+            //   let newBound = {
+            //     b: {b: bounds.northeast.lat, f: bounds.northeast.lng},
+            //     f: {b: bounds.southwest.lat, f: bounds.southwest.lng}
+            //   }
+            //   // res.data.routes[0].bounds = newBound
+            //   // delete res.data.routes[0].bounds
+            //   const leg = res.data.routes[0].legs[0]
+            //   res.data.request = {
+            //     destination: {query: leg.end_address},
+            //     origin: {query: leg.start_address},
+            //     travelMode: "DRIVING"
+            //   }
+            //   console.log(res.data,'DATA BE here');
+            //   this.setState({ directions: res.data})
+            //   // console.log(this.state,'directing');
+            //   // console.log('End', startCords, endCords);
+            // } else {
+            //   console.log(res.data);
             // }
-            // res.data.routes[0].bounds = newBound
-            this.setState({ directions: res.data})
-            console.log(this.state,'directing');
-            console.log('End', startCords, endCords);
+            console.log("Success", res.data);
           })
+          .catch(error => console.error('Axios Post', error))
 
       })
       .catch(error => console.error('Error in the End', error))
   }
+  directionButton() {
+    axios.get('http://localhost:8081/route/axjl-123XL')
+      .then(res => {
+        // console.log(res.data);
+        if(res.data.path) {
+          // let bounds = res.data.routes[0].bounds
+          // let newBound = {
+          //   b: {b: bounds.northeast.lat, f: bounds.northeast.lng},
+          //   f: {b: bounds.southwest.lat, f: bounds.southwest.lng}
+          // }
+          // res.data.routes[0].bounds = newBound
+          // delete res.data.routes[0].bounds
+          // const leg = res.data.routes[0].legs[0]
+          let startCords = {lat: res.data.path[0][0], lng: res.data.path[0][1]}
+          let endCords = {lat: res.data.path[1][0], lng: res.data.path[1][1]}
+          res.data.request = {
+            destination: {query: startCords},
+            origin: {query: endCords},
+            travelMode: "DRIVING"
+          }
+          this.setState({
+            directions: res.data,
+            endLocation: startCords,
+            startLocation: endCords
+          })
+        } else {
+          console.log(res.data);
+        }
+      })
+    }
   render() {
     let start = {
       value: this.state.start,
@@ -118,7 +167,6 @@ class MapContainer extends Component {
     return(
       <div className="maxW">
         <MapArea
-          googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${config.google.maps}&v=3.exp&libraries=geometry,drawing,places`}
           loadingElement={<div style={{ height: '50vh', width: '50%' }} />}
           containerElement={<div style={{ height: '60vh', width: '50%' }} className="maxW"/>}
           mapElement={<div style={{ height: `100%` }} />}
@@ -127,6 +175,8 @@ class MapContainer extends Component {
           end={this.state.end}
           center={this.state.mapCenter}
           updateDirections={this.updateDirections}
+          endLocation={this.state.endLocation}
+          startLocation={this.state.startLocation}
         />
         <MapForm
           formSubmit={this.handleFormSubmit}
@@ -134,6 +184,7 @@ class MapContainer extends Component {
           end={end}
           cssClasses={cssClasses}
         />
+        <button onClick={this.directionButton}> Render Directions </button>
       </div>
     )
   }

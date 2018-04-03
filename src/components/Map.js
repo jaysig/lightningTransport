@@ -22,20 +22,20 @@ let MapArea = compose(
   lifecycle({
     componentWillUpdate(props) {
       const DirectionsService = new google.maps.DirectionsService();
-      console.log(props.directions, 'props here');
-      if(props.directions.status === "OK" && props.directions.routes[0].bounds.northeast) {
-        const bounds = props.directions.routes[0].bounds
+      if(props.directions.status === "success" && !props.directions.routes) {
         DirectionsService.route({
           // origin: new google.maps.LatLng(bounds.northeast.lat, bounds.northeast.lng),
           // destination: new google.maps.LatLng(bounds.southwest.lat, bounds.southwest.lng),
-          origin: props.start,
-          destination: props.end,
+          origin: props.startLocation,
+          destination: props.endLocation,
           travelMode: google.maps.TravelMode.DRIVING,
         }, (result, status) => {
           if (status === google.maps.DirectionsStatus.OK) {
             props.updateDirections(result)
           } else {
-            console.error(`error fetching directions ${result}`);
+            if(status !== "OVER_QUERY_LIMIT") {
+              console.error(`error fetching directions ${result}`);
+            }
           }
         });
       }
@@ -48,7 +48,7 @@ let MapArea = compose(
       defaultCenter={props.center}
     >
 
-      {props.directions && <DirectionsRenderer directions={props.directions} />}
+      {props.directions.routes && <DirectionsRenderer directions={props.directions} />}
     </GoogleMap>
 
   </div>
