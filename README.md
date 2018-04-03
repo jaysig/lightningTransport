@@ -8,12 +8,12 @@
 
 #### Running manually
 
-- Clone this repo on local machine and navigate into directory.
-- Create a config.json file at the root director and your Google API Key { "google": { "maps": YOURAPIKEY }}
+- Clone this repo on your local machine and navigate into the directory.
+- Create a config.json file at the root directory and add your Google API Key { "google": { "maps": YOURAPIKEY }}
 - Install NPM dependencies: ```npm install```
 - Run server locally: ```npm start```
-- Application will be served on localhost and port 8080 as default.
-- You will also need to have the API running the background
+- Application will be served on localhost and port 8080 as the default.
+- You will also need to have the [API](https://github.com/jaysig/lightningTransportAPI) running in the background
 
 
 ## Built With
