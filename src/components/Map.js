@@ -13,8 +13,8 @@ const {
 let MapArea = compose(
   withProps({
     googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${config.google.maps}&v=3.exp&libraries=geometry,drawing,places`,
-    loadingElement: <div style={{ height: '77vh', width: '50%' }} />,
-    containerElement: <div style={{ height: '70vh', width: '50%' }} />,
+    loadingElement: <div style={{ height: '60vh', width: '100%' }} />,
+    containerElement: <div style={{ height: '60vh', width: '100%' }} />,
     mapElement: <div style={{ height: `100%` }} />,
   }),
   withScriptjs,

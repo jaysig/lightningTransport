@@ -4,7 +4,7 @@ import PlacesAutocomplete from 'react-places-autocomplete'
 let MapForm = (props) => {
   const {formSubmit, start, end, cssClasses } = props
   return (
-    <form onSubmit={formSubmit.bind(this)} id="valueForm" className="maxW">
+    <form onSubmit={formSubmit.bind(this)} id="valueForm">
       <h3>Where do you want to go?</h3>
       <div>
         <label> Start</label>

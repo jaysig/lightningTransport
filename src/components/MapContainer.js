@@ -114,10 +114,9 @@ class MapContainer extends Component {
       input: 'roy',
       autocompleteContainer: 'places',
       autocompleteItem: 'ron', //Colors the drop down items
-      //autocompleteItemActive: 'rob', //This doesn't appear linked to anything
     }
     return(
-      <div>
+      <div className="maxW">
         <MapArea
           googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${config.google.maps}&v=3.exp&libraries=geometry,drawing,places`}
           loadingElement={<div style={{ height: '50vh', width: '50%' }} />}
