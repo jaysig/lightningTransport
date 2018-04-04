@@ -1,5 +1,6 @@
 import React from 'react';
 import PlacesAutocomplete from 'react-places-autocomplete'
+import roundTo from 'round-to'
 const { compose, withProps, lifecycle } = require("recompose");
 const {
   withScriptjs,
@@ -19,50 +20,34 @@ let MapForm = compose(
   lifecycle({
   })
 )(props =>
-  <form onSubmit={props.formSubmit.bind(this)} id="valueForm">
-    <h3>Where do you want to go?</h3>
-    <div>
-      <label> Start</label>
-      <PlacesAutocomplete
-        inputProps={props.start}
-        classNames={props.cssClasses}
-      />
+  <div>
+    {props.outputs && <div className="formButtons">
+      <h4>Distance: {`${roundTo(props.outputs.distance / 1000,2)} kilometers`}</h4>
+      <h4>Duration: {`${Math.ceil(props.outputs.time / 60)} minutes`}</h4>
+    </div>}
+    <form onSubmit={props.formSubmit.bind(this)} className="formButtons">
+      <h3>Where do you want to go?</h3>
+      <div>
+        <label> Start</label>
+        <PlacesAutocomplete
+          inputProps={props.start}
+          classNames={props.cssClasses}
+        />
+      </div>
+      <div>
+        <label>End</label>
+        <PlacesAutocomplete
+          inputProps={props.end}
+          classNames={props.cssClasses}
+        />
+      </div>
+      <button disabled={props.isDisabled()} type="submit">Submit</button>
+    </form>
+    <div style={{marginTop: '2%'}} className="formButtons">
+      {props.renderMapButton && <button onClick={props.directionButton}> Render Directions On Map</button>}
     </div>
-    <div>
-      <label>End</label>
-      <PlacesAutocomplete
-        inputProps={props.end}
-        classNames={props.cssClasses}
-      />
-    </div>
-    <button type="submit">Submit</button>
-  </form>
+  </div>
 );
 
-
-
-// (props) => {
-//   const {formSubmit, start, end, cssClasses } = props
-//   return (
-//     <form onSubmit={formSubmit.bind(this)} id="valueForm">
-//       <h3>Where do you want to go?</h3>
-//       <div>
-//         <label> Start</label>
-//         <PlacesAutocomplete
-//           inputProps={start}
-//           classNames={cssClasses}
-//         />
-//       </div>
-//       <div>
-//         <label>End</label>
-//         <PlacesAutocomplete
-//           inputProps={end}
-//           classNames={cssClasses}
-//         />
-//       </div>
-//       <button type="submit">Submit</button>
-//     </form>
-//   )
-// }
 
 export default MapForm;
