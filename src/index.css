@@ -4,15 +4,16 @@ body {
   font-family: sans-serif;
 }
 
-form {
-    width: 600px;
-    margin: 0 auto;
-    display: inline-block;
-    text-align: center;
-}
 
 div {
   margin-bottom: 10px;
+}
+
+.formButtons {
+  width: 600px;
+  margin: 0 auto;
+  display: inline-block;
+  text-align: center;
 }
 
 .header {
