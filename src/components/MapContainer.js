@@ -22,17 +22,35 @@ class MapContainer extends Component {
       start: 'Dallas, TX',
       end: '',
       mapCenter: {lat:32.7844217, lng:-96.8069456},
-      directions: {routes: []}
+      directions: {routes: []},
+      mapButton: false
     }
     this.changeStart = (start) => this.setState({ start })
     this.changeEnd = (end) => this.setState({ end })
     this.handleFormSubmit = this.handleFormSubmit.bind(this)
     this.updateDirections = this.updateDirections.bind(this)
     this.directionButton = this.directionButton.bind(this)
+    this.isDisabled = this.isDisabled.bind(this)
+    this.showMapButton = this.showMapButton.bind(this)
   }
 
   updateDirections(directions) {
     this.setState({directions})
+  }
+
+  showMapButton() {
+    if(this.state.end) {
+      this.setState({mapButton: true})
+    }
+  }
+
+  isDisabled(){
+    const {start, end} = this.state
+    if(start.length > 7 && end.length > 7) {
+      return false
+    } else {
+      return true
+    }
   }
 
   handleFormSubmit = (event) => {
@@ -73,45 +91,14 @@ class MapContainer extends Component {
           startCords,
           endCords
         }
-        // this.props.dispatch(newRoute(cords))
-        // origin: cords.startCords,
-        // destination: cords.endCords,
         let directionRequest = {
           origin: this.state.start,
           destination: this.state.end,
           travelMode: "DRIVING"
         }
-        // axios.post('http://localhost:8081/route', { directionRequest })
-        // .then(function(result){
-        //   console.log(result);
-        //   dispatch(routeToken(result));
-        // });
-        // console.log(cordArray, 'cord Check');
+        this.showMapButton();
         axios.post('http://localhost:8081/route', cordArray)
           .then(res => {
-            // console.log(res,'resly');
-            // console.log(res.data);
-            // if(res.data.routes) {
-            //   let bounds = res.data.routes[0].bounds
-            //   let newBound = {
-            //     b: {b: bounds.northeast.lat, f: bounds.northeast.lng},
-            //     f: {b: bounds.southwest.lat, f: bounds.southwest.lng}
-            //   }
-            //   // res.data.routes[0].bounds = newBound
-            //   // delete res.data.routes[0].bounds
-            //   const leg = res.data.routes[0].legs[0]
-            //   res.data.request = {
-            //     destination: {query: leg.end_address},
-            //     origin: {query: leg.start_address},
-            //     travelMode: "DRIVING"
-            //   }
-            //   console.log(res.data,'DATA BE here');
-            //   this.setState({ directions: res.data})
-            //   // console.log(this.state,'directing');
-            //   // console.log('End', startCords, endCords);
-            // } else {
-            //   console.log(res.data);
-            // }
             console.log("Success", res.data);
           })
           .catch(error => console.error('Axios Post', error))
@@ -122,16 +109,7 @@ class MapContainer extends Component {
   directionButton() {
     axios.get('http://localhost:8081/route/axjl-123XL')
       .then(res => {
-        // console.log(res.data);
         if(res.data.path) {
-          // let bounds = res.data.routes[0].bounds
-          // let newBound = {
-          //   b: {b: bounds.northeast.lat, f: bounds.northeast.lng},
-          //   f: {b: bounds.southwest.lat, f: bounds.southwest.lng}
-          // }
-          // res.data.routes[0].bounds = newBound
-          // delete res.data.routes[0].bounds
-          // const leg = res.data.routes[0].legs[0]
           let startCords = {lat: res.data.path[0][0], lng: res.data.path[0][1]}
           let endCords = {lat: res.data.path[1][0], lng: res.data.path[1][1]}
           res.data.request = {
@@ -142,7 +120,8 @@ class MapContainer extends Component {
           this.setState({
             directions: res.data,
             endLocation: startCords,
-            startLocation: endCords
+            startLocation: endCords,
+            outputs: {distance: res.data.total_distance, time: res.data.total_time}
           })
         } else {
           console.log(res.data);
@@ -180,11 +159,17 @@ class MapContainer extends Component {
         />
         <MapForm
           formSubmit={this.handleFormSubmit}
+          outputs={this.state.outputs}
           start={start}
           end={end}
+          directions={this.state.directions}
           cssClasses={cssClasses}
+          isDisabled={this.isDisabled}
+          showRenderMap={this.state.endLocation}
+          renderMapButton={this.state.mapButton}
+          directionButton={this.directionButton}
         />
-        <button onClick={this.directionButton}> Render Directions On Map</button>
+
       </div>
     )
   }
