@@ -2,9 +2,7 @@ import React, { Component} from 'react';
 import axios from 'axios';
 import MapArea from './Map'
 import MapForm from './MapForm'
-import { connect } from 'react-redux';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
-import { newRoute } from '../actions';
 import config from '../../config.json'
 const {
   withScriptjs,
@@ -174,4 +172,4 @@ class MapContainer extends Component {
     )
   }
 }
-export default connect()(MapContainer)
+export default MapContainer
